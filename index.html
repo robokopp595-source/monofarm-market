@@ -328,7 +328,7 @@ function render(){
         </div>
 
         ${x.image_url ? `<img src="${esc(x.image_url)}" alt="${esc(x.product_name)}" style="width:100%;max-height:250px;object-fit:contain;border-radius:12px;margin:10px 0;">` : ''}<div class="meta">
-  <b>Продавец:</b> ${esc(x.seller)}<br>
+  <b>Продавец:</b> <a href="#" onclick="showSellerProfile('${x.user_id}');return false;">${esc(x.seller)}</a><br>
   <b>В наличии:</b> ${esc(x.quantity)} шт.<br>
   <b>Телефон:</b> ${esc(x.contact || 'Не указан')}<br>
 <b>Telegram:</b> ${esc(x.telegram || 'Не указан')}
@@ -352,7 +352,37 @@ function render(){
     `;
   }).join('');
 }
+function showSellerProfile(userId){
+  const sellerProducts = rows.filter(r => r.user_id === userId);
 
+  if(!sellerProducts.length) return;
+
+  const seller = sellerProducts[0];
+
+  $('list').innerHTML = `
+    <div class="item">
+      <div class="name">${esc(seller.seller)}</div>
+      <div class="meta">
+        <b>Телефон:</b> ${esc(seller.contact || 'Не указан')}<br>
+        <b>Telegram:</b> ${esc(seller.telegram || 'Не указан')}<br><br>
+        <b>Товаров продавца:</b> ${sellerProducts.length}
+      </div>
+      <br>
+      <button onclick="render()">← Вернуться ко всем товарам</button>
+    </div>
+  ` + sellerProducts.map(x => `
+    <div class="item">
+      <div class="name">${esc(x.product_name)}</div>
+      <div class="price">${esc(x.price)} ${esc(x.currency)}</div>
+      ${x.image_url ? `<img src="${esc(x.image_url)}" alt="${esc(x.product_name)}" style="width:100%;max-height:250px;object-fit:contain;border-radius:12px;margin:10px 0;">` : ''}
+      <div class="meta">
+        <b>В наличии:</b> ${esc(x.quantity)} шт.
+      </div>
+    </div>
+  `).join('');
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 $('form').onsubmit=async e=>{
   e.preventDefault();
 
