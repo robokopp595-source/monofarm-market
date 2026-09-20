@@ -156,6 +156,8 @@ button:disabled{opacity:.55}
     <input id="quantity" type="number" min="0"
            placeholder="Количество в наличии" required>
 <input id="contact" type="text" placeholder="Телефон или Telegram продавца">
+    image_url:$('image_url').value.trim(),
+    <input id="image_url" type="url" placeholder="Ссылка на фото товара">
     <button id="submit" type="submit">Добавить товар</button>
     <button id="cancel" type="button"
             class="secondary hidden">Отмена</button>
@@ -320,7 +322,7 @@ function render(){
             ${esc(x.price)} ${esc(x.currency)}
           </div>
         </div>
-
+${x.image_url ? `<img src="${esc(x.image_url)}" alt="Фото товара" style="width:100%;max-height:300px;object-fit:contain;border-radius:12px;margin:12px 0;">` : ''}
         <div class="meta">
   <b>Продавец:</b> ${esc(x.seller)}<br>
   <b>В наличии:</b> ${esc(x.quantity)} шт.<br>
@@ -406,7 +408,7 @@ function editRow(id){
   $('price').value=x.price||'';
   $('currency').value=x.currency||'UZS';
   $('quantity').value=x.quantity||0;
-
+  $('image_url').value=x.image_url||'';
   $('formTitle').textContent='Изменить товар';
   $('submit').textContent='Сохранить';
   $('cancel').classList.remove('hidden');
