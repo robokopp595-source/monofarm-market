@@ -155,7 +155,8 @@ button:disabled{opacity:.55}
 
     <input id="quantity" type="number" min="0"
            placeholder="Количество в наличии" required>
-<input id="contact" type="text" placeholder="Телефон или Telegram продавца">
+<input id="contact" type="tel" placeholder="Телефон продавца">
+<input id="telegram" type="text" placeholder="Telegram username, например @username">
     
     
 
@@ -329,8 +330,9 @@ ${x.image_url ? `<img src="${esc(x.image_url)}" alt="Фото товара" styl
         ${x.image_url ? `<img src="${esc(x.image_url)}" alt="${esc(x.product_name)}" style="width:100%;max-height:250px;object-fit:contain;border-radius:12px;margin:10px 0;">` : ''}<div class="meta">
   <b>Продавец:</b> ${esc(x.seller)}<br>
   <b>В наличии:</b> ${esc(x.quantity)} шт.<br>
-  <b>Контакт:</b> ${esc(x.contact || 'Не указан')}
-  ${x.contact ? `<a href="${x.contact.trim().startsWith('@') ? 'https://t.me/' + x.contact.trim().substring(1) : 'tel:' + x.contact.trim().replace(/[^+\d]/g,'')}" target="_blank" style="display:inline-block;margin-top:10px;padding:10px 16px;background:#16a34a;color:white;text-decoration:none;border-radius:8px;font-weight:bold;">Связаться с продавцом</a>` : ''}
+  <b>Телефон:</b> ${esc(x.contact || 'Не указан')}<br>
+<b>Telegram:</b> ${esc(x.telegram || 'Не указан')}
+  ${x.contact ? `<a href="tel:${x.contact.trim().replace(/[^+\d]/g,'')}">Позвонить</a>` : ''} ${x.telegram ? `<a href="https://t.me/${x.telegram.trim().replace(/^@/,'')}" target="_blank">Telegram</a>` : ''}
 </div>
 
         ${mine ? `
@@ -388,6 +390,7 @@ if(imageFile){
     currency:$('currency').value,
     quantity:Number($('quantity').value),
   contact:$('contact').value.trim(),
+  telegram:$('telegram').value.trim(),
   image_url:uploadedImageUrl,
     user_id:currentUser.id,
     updated_at:new Date().toISOString()
@@ -435,6 +438,8 @@ function editRow(id){
   $('price').value=x.price||'';
   $('currency').value=x.currency||'UZS';
   $('quantity').value=x.quantity||0;
+  $('contact').value=x.contact||'';
+$('telegram').value=x.telegram||'';
   $('image_url').value=x.image_url||'';
   $('formTitle').textContent='Изменить товар';
   $('submit').textContent='Сохранить';
