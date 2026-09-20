@@ -156,7 +156,7 @@ button:disabled{opacity:.55}
     <input id="quantity" type="number" min="0"
            placeholder="Количество в наличии" required>
 <input id="contact" type="text" placeholder="Телефон или Telegram продавца">
-    image_url:uploadedImageUrl,
+    
     <input id="image_url" type="url" placeholder="Ссылка на фото товара">
     <input id="image_file" type="file" accept="image/*">
     <button id="submit" type="submit">Добавить товар</button>
@@ -385,6 +385,7 @@ if(imageFile){
     currency:$('currency').value,
     quantity:Number($('quantity').value),
   contact:$('contact').value.trim(),
+  image_url:uploadedImageUrl,
     user_id:currentUser.id,
     updated_at:new Date().toISOString()
   };
