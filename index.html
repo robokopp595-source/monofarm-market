@@ -361,7 +361,7 @@ $('form').onsubmit=async e=>{
     return;
   }
 
-  let uploadedImageUrl = '';
+  let uploadedImageUrl = editing ? (rows.find(r => String(r.id) === String(editing))?.image_url || '') : '';
 
 const imageFile = $('image_file').files[0];
 
