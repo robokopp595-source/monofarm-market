@@ -156,8 +156,9 @@ button:disabled{opacity:.55}
     <input id="quantity" type="number" min="0"
            placeholder="Количество в наличии" required>
 <input id="contact" type="text" placeholder="Телефон или Telegram продавца">
-    image_url:$('image_url').value.trim(),
+    image_url:uploadedImageUrl,
     <input id="image_url" type="url" placeholder="Ссылка на фото товара">
+    <input id="image_file" type="file" accept="image/*">
     <button id="submit" type="submit">Добавить товар</button>
     <button id="cancel" type="button"
             class="secondary hidden">Отмена</button>
@@ -355,7 +356,29 @@ $('form').onsubmit=async e=>{
     return;
   }
 
-  const obj={
+  let uploadedImageUrl = $('image_url').value.trim();
+
+const imageFile = $('image_file').files[0];
+
+if(imageFile){
+  const ext = imageFile.name.split('.').pop();
+  const fileName = `${currentUser.id}/${Date.now()}.${ext}`;
+
+  const { error: uploadError } = await db.storage
+    .from('product-images')
+    .upload(fileName, imageFile);
+
+  if(uploadError){
+    message('status', 'Ошибка загрузки фото: ' + uploadError.message, true);
+    return;
+  }
+
+  const { data: publicData } = db.storage
+    .from('product-images')
+    .getPublicUrl(fileName);
+
+  uploadedImageUrl = publicData.publicUrl;
+}const obj={
     seller:$('seller').value.trim(),
     product_name:$('product').value.trim(),
     price:Number($('price').value),
