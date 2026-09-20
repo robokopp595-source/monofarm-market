@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Товары продавцов</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f4f7f6;color:#18201d}
+    .wrap{max-width:1050px;margin:auto;padding:22px}.head{background:linear-gradient(135deg,#087f5b,#0ca678);color:#fff;padding:28px;border-radius:22px;margin-bottom:18px}
+    h1{margin:0 0 7px;font-size:30px}.head p{margin:0;opacity:.9}.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 6px 25px rgba(0,0,0,.06)}
+    h2{margin-top:0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.full{grid-column:1/-1}
+    input,select,button{width:100%;font-size:16px;padding:13px;border-radius:12px;border:1px solid #d9e1de;background:#fff}
+    button{border:0;background:#087f5b;color:#fff;font-weight:700;cursor:pointer}.secondary{background:#eef3f1;color:#27332f}.danger{background:#fff0f0;color:#c92a2a}
+    .toolbar{display:flex;gap:10px;margin-bottom:14px}.toolbar input{flex:1}
+    .item{border:1px solid #e5ebe8;border-radius:15px;padding:15px;margin:10px 0}.item-top{display:flex;justify-content:space-between;gap:10px}
+    .name{font-size:19px;font-weight:750}.price{font-size:19px;font-weight:750;color:#087f5b;white-space:nowrap}
+    .meta{color:#65716d;margin-top:8px;line-height:1.55}.actions{display:flex;gap:8px;margin-top:12px}.actions button{padding:9px}
+    .empty{text-align:center;color:#77827e;padding:25px}.status{display:none;padding:12px;border-radius:10px;margin-bottom:12px}.ok{display:block;background:#e6fcf5;color:#087f5b}.err{display:block;background:#fff0f0;color:#c92a2a}
+    @media(max-width:650px){.wrap{padding:12px}.grid{grid-template-columns:1fr}.full{grid-column:auto}.head{padding:22px}h1{font-size:26px}.item-top{display:block}.price{margin-top:7px}.toolbar{display:block}.toolbar input{margin-bottom:9px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><h1>Товары продавцов</h1><p>Общая база цен и наличия товаров</p></div>
+  <div class="card">
+    <h2 id="formTitle">Добавить товар</h2>
+    <div id="status" class="status"></div>
+    <form id="form" class="grid">
+      <input id="seller" placeholder="Продавец" required>
+      <input id="product" placeholder="Название товара" required>
+      <input id="price" type="number" min="0" step="0.01" placeholder="Цена" required>
+      <select id="currency"><option value="UZS">Сум (UZS)</option><option value="RUB">Рубль (RUB)</option><option value="USD">Доллар (USD)</option><option value="EUR">Евро (EUR)</option></select>
+      <input id="quantity" type="number" min="0" step="1" placeholder="Количество в наличии" required>
+      <button type="submit" id="submit">Добавить товар</button>
+      <button type="button" id="cancel" class="secondary full" style="display:none">Отменить изменение</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Все товары</h2>
+    <div class="toolbar"><input id="search" placeholder="Поиск по товару или продавцу"><button id="refresh" style="max-width:160px">Обновить</button></div>
+    <div id="list"><div class="empty">Загрузка…</div></div>
+  </div>
+</div>
+<script>
+const SUPABASE_URL='https://nyqolvdmvjgggwymtcmd.supabase.co';
+const SUPABASE_KEY='sb_publishable_lSSMYizJ7qrXD8uVgoC_8Q_cPhdl49D';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let rows=[],editing=null;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(v){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(Number(v))}
+function date(v){return new Date(v).toLocaleString('ru-RU')}
+function msg(t,e=false){$('status').textContent=t;$('status').className='status '+(e?'err':'ok');setTimeout(()=>{$('status').className='status'},3500)}
+async function load(){
+  const {data,error}=await db.from('products').select('*').order('updated_at',{ascending:false});
+  if(error){$('list').innerHTML='<div class="empty">Ошибка загрузки: '+esc(error.message)+'</div>';return}
+  rows=data||[];render();
+}
+function render(){
+  const q=$('search').value.trim().toLowerCase();
+  const a=rows.filter(x=>(x.product_name+' '+x.seller).toLowerCase().includes(q));
+  if(!a.length){$('list').innerHTML='<div class="empty">Товаров пока нет</div>';return}
+  $('list').innerHTML=a.map(x=>`<div class="item">
+    <div class="item-top"><div class="name">${esc(x.product_name)}</div><div class="price">${money(x.price)} ${esc(x.currency)}</div></div>
+    <div class="meta"><b>Продавец:</b> ${esc(x.seller)}<br><b>В наличии:</b> ${esc(x.quantity)} шт.<br><b>Обновлено:</b> ${date(x.updated_at)}</div>
+    <div class="actions"><button class="secondary" onclick="editRow(${x.id})">Изменить</button><button class="danger" onclick="removeRow(${x.id})">Удалить</button></div>
+  </div>`).join('');
+}
+$('form').onsubmit=async e=>{
+  e.preventDefault();
+  const obj={seller:$('seller').value.trim(),product_name:$('product').value.trim(),price:Number($('price').value),currency:$('currency').value,quantity:Number($('quantity').value),updated_at:new Date().toISOString()};
+  let r=editing?await db.from('products').update(obj).eq('id',editing):await db.from('products').insert(obj);
+  if(r.error){msg('Ошибка: '+r.error.message,true);return}
+  msg(editing?'Товар изменён':'Товар добавлен');reset();load();
+};
+function editRow(id){
+  const x=rows.find(r=>r.id===id); if(!x)return; editing=id;
+  $('seller').value=x.seller;$('product').value=x.product_name;$('price').value=x.price;$('currency').value=x.currency;$('quantity').value=x.quantity;
+  $('formTitle').textContent='Изменить товар';$('submit').textContent='Сохранить изменения';$('cancel').style.display='block';scrollTo({top:0,behavior:'smooth'});
+}
+function reset(){editing=null;$('form').reset();$('currency').value='UZS';$('formTitle').textContent='Добавить товар';$('submit').textContent='Добавить товар';$('cancel').style.display='none'}
+$('cancel').onclick=reset;
+async function removeRow(id){if(!confirm('Удалить этот товар?'))return;const {error}=await db.from('products').delete().eq('id',id);if(error){msg('Ошибка: '+error.message,true);return}msg('Товар удалён');load()}
+$('search').oninput=render;$('refresh').onclick=load;
+load();
+</script>
+</body></html>
