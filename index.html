@@ -154,7 +154,7 @@ button:disabled{opacity:.55}
 
     <input id="quantity" type="number" min="0"
            placeholder="Количество в наличии" required>
-
+<input id="contact" type="text" placeholder="Телефон или Telegram продавца">
     <button id="submit" type="submit">Добавить товар</button>
     <button id="cancel" type="button"
             class="secondary hidden">Отмена</button>
@@ -357,6 +357,7 @@ $('form').onsubmit=async e=>{
     price:Number($('price').value),
     currency:$('currency').value,
     quantity:Number($('quantity').value),
+  contact:$('contact').value.trim(),
     user_id:currentUser.id,
     updated_at:new Date().toISOString()
   };
