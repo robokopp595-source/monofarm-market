@@ -330,6 +330,7 @@ ${x.image_url ? `<img src="${esc(x.image_url)}" alt="Фото товара" styl
   <b>Продавец:</b> ${esc(x.seller)}<br>
   <b>В наличии:</b> ${esc(x.quantity)} шт.<br>
   <b>Контакт:</b> ${esc(x.contact || 'Не указан')}
+  ${x.contact ? `<a href="${x.contact.startsWith('@') ? 'https://t.me/' + x.contact.slice(1) : x.contact.startsWith('http') ? x.contact : 'tel:' + x.contact}" target="_blank" style="display:inline-block;margin-top:10px;padding:10px 16px;background:#16a34a;color:white;text-decoration:none;border-radius:8px;font-weight:bold;">Связаться с продавцом</a>` : ''}
 </div>
 
         ${mine ? `
