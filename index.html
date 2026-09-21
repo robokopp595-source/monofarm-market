@@ -347,6 +347,11 @@ function render(){
               onclick="removeRow('${x.id}')">
               Удалить
             </button>
+            ${isAdmin && x.user_id !== currentUser.id ? `
+<button class="danger" onclick="blockSeller('${x.user_id}')">
+  Заблокировать продавца
+</button>
+` : ''}
           </div>
         `:''}
       </div>
@@ -486,7 +491,22 @@ function resetForm(){
   $('submit').textContent='Добавить товар';
   $('cancel').classList.add('hidden');
 }
+async function blockSeller(userId){
+  if(!currentUser) return;
 
+  if(!confirm('Заблокировать этого продавца?')) return;
+
+  const {error} = await db
+    .from('blocked_users')
+    .insert({user_id:userId});
+
+  if(error){
+    alert('Ошибка: ' + error.message);
+    return;
+  }
+
+  alert('Продавец заблокирован');
+}
 async function removeRow(id){
   if(!currentUser) return;
 
