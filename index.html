@@ -317,6 +317,7 @@ function render(){
     const mine=
       currentUser &&
       x.user_id===currentUser.id;
+    const isAdmin = currentUser && currentUser.id === '483f909e-74b4-4c60-b23c-a77a57d0f541';
 
     return `
       <div class="item">
@@ -335,7 +336,7 @@ function render(){
   ${x.contact ? `<a href="tel:${x.contact.trim().replace(/[^+\d]/g,'')}">Позвонить</a>` : ''} ${x.telegram ? `<a href="https://t.me/${x.telegram.trim().replace(/^@/,'')}" target="_blank">Telegram</a>` : ''}
 </div>
 
-        ${mine ? `
+        ${mine || isAdmin ? `
           <div class="actions">
             <button class="secondary"
               onclick="editRow('${x.id}')">
