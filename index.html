@@ -516,7 +516,7 @@ async function removeRow(id){
     .from('products')
     .delete()
     .eq('id',id)
-    .eq('user_id',currentUser.id);
+    
 
   if(error){
     alert('Ошибка: '+error.message);
