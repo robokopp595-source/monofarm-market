@@ -434,6 +434,7 @@ if(imageFile){
   };
 localStorage.setItem('seller_contact', $('contact').value.trim());
 localStorage.setItem('seller_telegram', $('telegram').value.trim());
+  localStorage.setItem('seller_name', $('seller').value.trim());
   let result;
 
   if(editing){
@@ -491,6 +492,8 @@ function resetForm(){
   $('form').reset();
   const savedContact = localStorage.getItem('seller_contact') || '';
 const savedTelegram = localStorage.getItem('seller_telegram') || '';
+  const savedSeller = localStorage.getItem('seller_name') || '';
+$('seller').value = savedSeller;
 $('contact').value = savedContact;
 $('telegram').value = savedTelegram;
   $('formTitle').textContent='Добавить товар';
