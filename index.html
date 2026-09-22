@@ -549,6 +549,7 @@ db.auth.onAuthStateChange(()=>{
 (async()=>{
   await updateAuth();
   await load();
+  await db.from('site_visits').insert({ page: location.pathname, referrer: document.referrer || null, user_agent: navigator.userAgent });
 })();
  function toggleSellerPanel(){
   const panel = $('sellerPanel');
