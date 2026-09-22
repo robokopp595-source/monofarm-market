@@ -233,6 +233,12 @@ async function updateAuth(){
     $('loggedIn').classList.remove('hidden');
     $('sellerPanel').classList.remove('hidden');
     $('userEmail').textContent=user.email;
+    if (user.id === '483f909e-74b4-4c60-b23c-a77a57d0f541') {
+  $('adminAnalytics').classList.remove('hidden');
+  await loadAnalytics();
+} else {
+  $('adminAnalytics').classList.add('hidden');
+}
   }else{
     $('loggedOut').classList.remove('hidden');
     $('loggedIn').classList.add('hidden');
@@ -555,6 +561,15 @@ db.auth.onAuthStateChange(()=>{
   await load();
   await db.from('site_visits').insert({ page: location.pathname, referrer: document.referrer || null, user_agent: navigator.userAgent });
 })();
+  async function loadAnalytics() {
+  const { count, error } = await db
+    .from('site_visits')
+    .select('*', { count: 'exact', head: true });
+
+  if (!error) {
+    $('analyticsContent').textContent = 'Всего посещений: ' + count;
+  }
+}
  function toggleSellerPanel(){
   const panel = $('sellerPanel');
   const btn = $('toggleSellerPanel');
