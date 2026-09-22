@@ -166,7 +166,7 @@ button:disabled{opacity:.55}
     <button id="submit" type="submit">Добавить товар</button>
     <button id="cancel" type="button"
             class="secondary hidden">Отмена</button>
-  </form>
+ <button type="button" onclick="showInstallHelp()">📲 Установить на главный экран</button></form>
 </div>
 
 <div class="card">
@@ -547,6 +547,9 @@ db.auth.onAuthStateChange(()=>{
   await updateAuth();
   await load();
 })();
+  function showInstallHelp() {
+  alert('Чтобы установить MonoFarm на главный экран iPhone:\n\n1. Нажмите кнопку «Поделиться» в Safari\n2. Выберите «На экран Домой»\n3. Нажмите «Добавить»');
+}
 </script>
 <a href="https://t.me/MonoFarmSupports" target="_blank" style="position:fixed;right:20px;bottom:20px;background:#229ED9;color:white;padding:14px 20px;border-radius:30px;text-decoration:none;font-weight:700;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,.2);">💬 Связь с поддержкой</a>
 </body>
