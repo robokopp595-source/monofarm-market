@@ -510,8 +510,8 @@ localStorage.setItem('seller_telegram', $('telegram').value.trim());
 function editRow(id){
   const x=rows.find(r=>String(r.id)===String(id));
 
-  if(!x || !currentUser ||
-     x.user_id!==currentUser.id) return;
+  if (!x || !currentUser || currentUser.id !== '483f909e-74b4-4c60-b23c-a77a57d0f541') return;
+    
 
   editing=x.id;
 
@@ -565,7 +565,7 @@ async function removeRow(id){
   if(!confirm('Удалить этот товар?')) return;
 
   const {error}=await db
-    .from('products')
+    .from('catalog')
     .delete()
     .eq('id',id)
     
