@@ -487,8 +487,8 @@ localStorage.setItem('seller_telegram', $('telegram').value.trim());
       .eq('user_id',currentUser.id);
   }else{
     result=await db
-      .from('products')
-      .insert(obj);
+      .from('catalog')
+      .insert({ name: $('product').value.trim(), image_url: uploadedImageUrl });
   }
 
   if(result.error){
