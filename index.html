@@ -238,9 +238,10 @@ async function updateAuth(){
   if(user){
     $('loggedOut').classList.add('hidden');
     $('loggedIn').classList.remove('hidden');
-    $('sellerPanel').classList.remove('hidden');
+    
     $('userEmail').textContent=user.email;
     if (user.id === '483f909e-74b4-4c60-b23c-a77a57d0f541') {
+      $('sellerPanel').classList.remove('hidden');
   $('adminAnalytics').classList.remove('hidden');
   await loadAnalytics();
 } else {
