@@ -137,6 +137,13 @@ button:disabled{opacity:.55}
         <b id="userEmail"></b>
       </div>
       <button id="logout" class="secondary">Выйти</button>
+      <button id="sellerProfileBtn" type="button" class="secondary">👤 Мои контакты</button>
+      <div id="sellerProfileForm" class="hidden" style="margin-top:10px;">
+  <input id="profileName" type="text" placeholder="Имя продавца">
+  <input id="profileContact" type="tel" placeholder="Телефон, например +998901234567">
+  <input id="profileTelegram" type="text" placeholder="Telegram, например @username">
+  <button id="saveSellerProfile" type="button">Сохранить контакты</button>
+</div>
     </div>
   </div>
 </div>
@@ -582,6 +589,27 @@ db.auth.onAuthStateChange(()=>{
   function showInstallHelp() {
   alert('Чтобы установить MonoFarm на главный экран iPhone:\n\n1. Нажмите кнопку «Поделиться» в Safari\n2. Выберите «На экран Домой»\n3. Нажмите «Добавить»');
 }
+  $('sellerProfileBtn').onclick = () => {
+  $('sellerProfileForm').classList.toggle('hidden');
+};
+  $('saveSellerProfile').onclick = async () => {
+  if (!currentUser) return;
+
+  const { error } = await db.from('seller_profiles').upsert({
+    user_id: currentUser.id,
+    seller_name: $('profileName').value.trim(),
+    contact: $('profileContact').value.trim(),
+    telegram: $('profileTelegram').value.trim(),
+    updated_at: new Date().toISOString()
+  });
+
+  if (error) {
+    alert('Ошибка: ' + error.message);
+    return;
+  }
+
+  alert('Контакты сохранены');
+};
 </script>
 <a href="https://t.me/MonoFarmSupports" target="_blank" style="position:fixed;right:20px;bottom:20px;background:#229ED9;color:white;padding:14px 20px;border-radius:30px;text-decoration:none;font-weight:700;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,.2);">💬 Связь с поддержкой</a>
 </body>
