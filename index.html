@@ -308,7 +308,16 @@ async function load(){
     .from('catalog')
     .select('*')
     .order('created_at', {ascending:false});
+const { data: stockData, error: stockError } = await db
+  .from('seller_stock')
+  .select('*');
 
+window.sellerStock = stockData || [];
+  const { data: profilesData } = await db
+  .from('seller_profiles')
+  .select('*');
+
+window.sellerProfiles = profilesData || [];
   if(error){
     $('list').innerHTML=
       '<div class="empty">Ошибка: '+
@@ -324,9 +333,10 @@ function render(){
   const q=$('search').value.trim().toLowerCase();
 
   const filtered=rows.filter(x=>
-    ((x.product_name||'')+' '+(x.seller||''))
-      .toLowerCase().includes(q)
-  );
+  (x.name || '').toLowerCase().includes(q)
+);
+      
+  
 
   if(!filtered.length){
     $('list').innerHTML=
@@ -335,30 +345,41 @@ function render(){
   }
 
   $('list').innerHTML=filtered.map(x=>{
-    const mine=
-      currentUser &&
-      x.user_id===currentUser.id;
+    
+      
+    
     const isAdmin = currentUser && currentUser.id === '483f909e-74b4-4c60-b23c-a77a57d0f541';
-
+const inStock = currentUser && (window.sellerStock || []).some(
+  s => s.catalog_id === x.id && s.seller_id === currentUser.id
+);
+    const sellersInStock = (window.sellerStock || [])
+  .filter(s => s.catalog_id === x.id)
+  .map(s => (window.sellerProfiles || []).find(p => p.user_id === s.seller_id))
+  .filter(Boolean);
     return `
       <div class="item">
         <div class="item-top">
           <div class="name">${esc(x.name)}</div>
-          
+          ${currentUser ? `<button type="button" onclick="toggleStock('${x.id}')" style="background:${inStock ? '#16a34a' : '#e5e7eb'};color:${inStock ? 'white' : '#374151'};">${inStock ? '✓ В наличии' : 'Отметить наличие'}</button>` : ''}
             
         
         </div>
 
         ${x.image_url ? `<img src="${esc(x.image_url)}" alt="${esc(x.product_name)}" style="width:100%;max-height:250px;object-fit:contain;border-radius:12px;margin:10px 0;">` : ''}<div class="meta">
-  <b>Продавец:</b> <a href="#" onclick="showSellerProfile('${x.user_id}');return false;">${esc(x.seller)}</a><br>
-  
-  <b>Телефон:</b> ${esc(x.contact || 'Не указан')}<br>
-<b>Telegram:</b> ${esc(x.telegram || 'Не указан')}
-  ${x.contact ? `<a href="tel:${x.contact.trim().replace(/[^+\d]/g,'')}">Позвонить</a>` : ''} ${x.telegram ? `<a href="https://t.me/${x.telegram.trim().replace(/^@/,'')}" target="_blank">Telegram</a>` : ''}
-${x.contact ? `<a href="https://wa.me/${x.contact.replace(/\D/g,'')}" target="_blank">WhatsApp</a>` : ''}
-</div>
+  ${sellersInStock.length ? `
+  <div style="margin-top:12px;">
+    <b>🟢 В наличии у продавцов:</b>
+    ${sellersInStock.map(p => `
+      <div style="margin-top:8px;">
+        <b>${esc(p.seller_name || 'Продавец')}</b><br>
+        ${p.contact ? `📞 ${esc(p.contact)} <a href="https://wa.me/${p.contact.replace(/\D/g,'')}" target="_blank">WhatsApp</a><br>` : ''}
+        ${p.telegram ? `Telegram: ${esc(p.telegram)}` : ''}
+      </div>
+    `).join('')}
+  </div>
+` : '<div style="margin-top:10px;">Нет продавцов с наличием</div>'}
 
-        ${mine || isAdmin ? `
+        ${isAdmin ? `
           <div class="actions">
             <button class="secondary"
               onclick="editRow('${x.id}')">
@@ -610,6 +631,41 @@ db.auth.onAuthStateChange(()=>{
 
   alert('Контакты сохранены');
 };
+  async function toggleStock(catalogId) {
+  if (!currentUser) return;
+
+  const exists = (window.sellerStock || []).some(
+    s => s.catalog_id === Number(catalogId) &&
+         s.seller_id === currentUser.id
+  );
+
+  if (exists) {
+    const { error } = await db
+      .from('seller_stock')
+      .delete()
+      .eq('catalog_id', catalogId)
+      .eq('seller_id', currentUser.id);
+
+    if (error) {
+      alert('Ошибка: ' + error.message);
+      return;
+    }
+  } else {
+    const { error } = await db
+      .from('seller_stock')
+      .insert({
+        catalog_id: Number(catalogId),
+        seller_id: currentUser.id
+      });
+
+    if (error) {
+      alert('Ошибка: ' + error.message);
+      return;
+    }
+  }
+
+  await load();
+}
 </script>
 <a href="https://t.me/MonoFarmSupports" target="_blank" style="position:fixed;right:20px;bottom:20px;background:#229ED9;color:white;padding:14px 20px;border-radius:30px;text-decoration:none;font-weight:700;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,.2);">💬 Связь с поддержкой</a>
 </body>
