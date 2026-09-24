@@ -298,9 +298,9 @@ async function load(){
     '<div class="empty">Загрузка...</div>';
 
   const {data,error}=await db
-    .from('products')
+    .from('catalog')
     .select('*')
-    .order('updated_at',{ascending:false});
+    .order('created_at', {ascending:false});
 
   if(error){
     $('list').innerHTML=
@@ -336,7 +336,7 @@ function render(){
     return `
       <div class="item">
         <div class="item-top">
-          <div class="name">${esc(x.product_name)}</div>
+          <div class="name">${esc(x.name)}</div>
           
             
         
