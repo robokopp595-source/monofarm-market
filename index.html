@@ -482,9 +482,10 @@ localStorage.setItem('seller_telegram', $('telegram').value.trim());
 
   if(editing){
     result=await db
-      .from('products')
-      .update(obj)
-      .eq('id',editing)
+      .from('catalog')
+    
+      .update(obj).eq('id',editing);
+      
       .eq('user_id',currentUser.id);
   }else{
     result=await db
