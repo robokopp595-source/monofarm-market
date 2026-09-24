@@ -360,7 +360,7 @@ const inStock = currentUser && (window.sellerStock || []).some(
       <div class="item">
         <div class="item-top">
           <div class="name">${esc(x.name)}</div>
-          ${currentUser ? `<button type="button" onclick="toggleStock('${x.id}')" style="background:${inStock ? '#16a34a' : '#e5e7eb'};color:${inStock ? 'white' : '#374151'};">${inStock ? '✓ В наличии' : 'Отметить наличие'}</button>` : ''}
+          ${currentUser && !isAdmin ? `<button type="button" onclick="toggleStock('${x.id}')" style="background:${inStock ? '#16a34a' : '#e5e7eb'};color:${inStock ? 'white' : '#374151'};">${inStock ? '✓ В наличии' : 'Отметить наличие'}</button>` : ''}
             
         
         </div>
