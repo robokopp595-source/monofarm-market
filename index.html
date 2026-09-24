@@ -151,18 +151,18 @@ button:disabled{opacity:.55}
     
     <input id="product" placeholder="Название товара" required>
 
-    <input id="price" type="number" min="0" step="0.01"
-           placeholder="Цена" required>
+    
+      
 
-    <select id="currency">
-      <option value="UZS">Сум (UZS)</option>
-      <option value="RUB" selected>Рубль (RUB)</option>
-      <option value="USD">Доллар (USD)</option>
-      <option value="EUR">Евро (EUR)</option>
-    </select>
+    
+      
+      
+      
+    
+  
 
-    <input id="quantity" type="number" min="0"
-           placeholder="Количество в наличии" required>
+  
+          
 <input id="contact" type="tel" placeholder="Телефон продавца">
 <input id="telegram" type="text" placeholder="Telegram username, например @username">
     
@@ -337,14 +337,14 @@ function render(){
       <div class="item">
         <div class="item-top">
           <div class="name">${esc(x.product_name)}</div>
-          <div class="price">
-            ${esc(x.price)} ${esc(x.currency)}
-          </div>
+          
+            
+        
         </div>
 
         ${x.image_url ? `<img src="${esc(x.image_url)}" alt="${esc(x.product_name)}" style="width:100%;max-height:250px;object-fit:contain;border-radius:12px;margin:10px 0;">` : ''}<div class="meta">
   <b>Продавец:</b> <a href="#" onclick="showSellerProfile('${x.user_id}');return false;">${esc(x.seller)}</a><br>
-  <b>В наличии:</b> ${esc(x.quantity)} шт.<br>
+  
   <b>Телефон:</b> ${esc(x.contact || 'Не указан')}<br>
 <b>Telegram:</b> ${esc(x.telegram || 'Не указан')}
   ${x.contact ? `<a href="tel:${x.contact.trim().replace(/[^+\d]/g,'')}">Позвонить</a>` : ''} ${x.telegram ? `<a href="https://t.me/${x.telegram.trim().replace(/^@/,'')}" target="_blank">Telegram</a>` : ''}
@@ -437,9 +437,9 @@ if(imageFile){
 }const obj={
     seller:$('seller').value.trim(),
     product_name:$('product').value.trim(),
-    price:Number($('price').value),
-    currency:$('currency').value,
-    quantity:Number($('quantity').value),
+    
+    
+    
   contact:$('contact').value.trim(),
   telegram:$('telegram').value.trim(),
   image_url:uploadedImageUrl,
@@ -488,9 +488,9 @@ function editRow(id){
 
   $('seller').value=x.seller||'';
   $('product').value=x.product_name||'';
-  $('price').value=x.price||'';
-  $('currency').value=x.currency||'UZS';
-  $('quantity').value=x.quantity||0;
+  
+  
+  
   $('contact').value=x.contact||'';
 $('telegram').value=x.telegram||'';
   
