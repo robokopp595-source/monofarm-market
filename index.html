@@ -348,6 +348,7 @@ function render(){
   <b>Телефон:</b> ${esc(x.contact || 'Не указан')}<br>
 <b>Telegram:</b> ${esc(x.telegram || 'Не указан')}
   ${x.contact ? `<a href="tel:${x.contact.trim().replace(/[^+\d]/g,'')}">Позвонить</a>` : ''} ${x.telegram ? `<a href="https://t.me/${x.telegram.trim().replace(/^@/,'')}" target="_blank">Telegram</a>` : ''}
+${x.contact ? `<a href="https://wa.me/${x.contact.replace(/\D/g,'')}" target="_blank">WhatsApp</a>` : ''}
 </div>
 
         ${mine || isAdmin ? `
