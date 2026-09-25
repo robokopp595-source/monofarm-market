@@ -283,7 +283,7 @@ $('login').onclick=async()=>{
   const password=$('password').value;
 
   const {error}=await db.auth.signInWithPassword({
-    email,password
+  email,password
   });
 
   if(error){
