@@ -329,6 +329,7 @@ window.sellerProfiles = profilesData || [];
   }
 
   rows=data||[];
+  $('productSuggestions').innerHTML=[...new Set(rows.map(x=>x.name).filter(Boolean))].map(name=>`<option value="${esc(name)}"></option>`).join('');
   render();
 }
 
