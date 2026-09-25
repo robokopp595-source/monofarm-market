@@ -671,7 +671,7 @@ db.auth.onAuthStateChange(()=>{
     }
   }
 
-  const y=window.scrollY; await load(); requestAnimationFrame(()=>window.scrollTo(0,y));
+  if(exists){window.sellerStock=window.sellerStock.filter(s=>!(s.catalog_id===Number(catalogId)&&s.seller_id===currentUser.id));}else{window.sellerStock.push({catalog_id:Number(catalogId),seller_id:currentUser.id});}
 }
 </script>
 <a href="https://t.me/MonoFarmSupports" target="_blank" style="position:fixed;right:20px;bottom:20px;background:#229ED9;color:white;padding:14px 20px;border-radius:30px;text-decoration:none;font-weight:700;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,.2);">💬 Связь с поддержкой</a>
