@@ -287,7 +287,7 @@ $('login').onclick=async()=>{
   });
 
   if(error){
-    message('authStatus','Ошибка входа: '+error.message,true);
+    alert('Ошибка входа: ' + error.message);
     return;
   }
 
