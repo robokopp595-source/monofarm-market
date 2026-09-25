@@ -292,7 +292,7 @@ $('login').onclick=async()=>{
   }
 
   $('password').value='';
-  await updateAuth();
+  await updateAuth(); await load();
 };
 
 $('logout').onclick=async()=>{
