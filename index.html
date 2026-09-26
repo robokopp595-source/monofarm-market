@@ -158,7 +158,7 @@ button:disabled{opacity:.55}
     
     <input id="product" placeholder="Название товара" list="productSuggestions" autocomplete="off" required>
 <datalist id="productSuggestions"></datalist>
-
+<div id="productSearchResults"></div>
     
       
 
@@ -332,7 +332,26 @@ window.sellerProfiles = profilesData || [];
   $('productSuggestions').innerHTML=[...new Set(rows.map(x=>x.name).filter(Boolean))].map(name=>`<option value="${esc(name)}"></option>`).join('');
   render();
 }
+$('product').addEventListener('input', function(){
+  const q=this.value.trim().toLowerCase();
+  const box=$('productSearchResults');
 
+  if(!q){
+    box.innerHTML='';
+    return;
+  }
+
+  const matches=rows.filter(x=>
+    (x.name || '').toLowerCase().includes(q)
+  ).slice(0,10);
+
+  box.innerHTML=matches.map(x=>
+    `<div onclick="$('product').value='${esc(x.name)}';$('productSearchResults').innerHTML='';"
+    style="padding:10px;border-bottom:1px solid #ddd;cursor:pointer;">
+    ${esc(x.name)} — уже есть в каталоге
+    </div>`
+  ).join('');
+});
 function render(){
   const q=$('search').value.trim().toLowerCase();
 
